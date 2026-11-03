@@ -17,6 +17,7 @@ from openai import OpenAI
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
 PROMPT_FILE = Path(__file__).parent / "prompts" / "supervisor_v2.md"
 CONFIG_FILE = PROJECT_ROOT / "config.yaml"
+GROQ_BASE_URL = "https://api.groq.com/openai/v1"
 
 
 class RouterReplyError(Exception):
@@ -114,16 +115,15 @@ def load_prompt(today):
     return template.replace("{today}", today)
 
 
-# Load environment variables from the project's .env file, then create an
-# OpenAI client using OPENAI_API_KEY (or LLM_API_KEY as a fallback).
-# Raise an error if neither environment variable provides a key.
+# Load environment variables from the project's .env file, then create a
+# Groq client through its OpenAI-compatible endpoint.
 def make_client(timeout=None):
-    """Create the OpenAI client using the key stored in .env."""
+    """Create the Groq-compatible OpenAI client using GROQ_API_KEY in .env."""
     load_dotenv(PROJECT_ROOT / ".env")
-    api_key = os.getenv("OPENAI_API_KEY") or os.getenv("LLM_API_KEY")
+    api_key = os.getenv("GROQ_API_KEY")
     if not api_key:
-        raise ValueError("No API key found. Add OPENAI_API_KEY to .env.")
-    return OpenAI(api_key=api_key, timeout=timeout)
+        raise ValueError("No API key found. Add GROQ_API_KEY to .env.")
+    return OpenAI(api_key=api_key, base_url=GROQ_BASE_URL, timeout=timeout)
 
 
 # Classify a question by sending it and the dated supervisor prompt to the LLM.

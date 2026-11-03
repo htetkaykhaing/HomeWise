@@ -1,10 +1,8 @@
 # Shared settings. Never type these into code (see Docs/MAINTENANCE.md).
 
 llm:
-  # Team standard: GPT-5.4, one model for V0, V1 and V2, so score
-  # differences come from the design, not from the model.
-  # Dated snapshot = the same model, frozen, so results stay reproducible.
-  model: "gpt-5.4-2026-03-05"
+  # Groq-hosted model used for all live answers.
+  model: "openai/gpt-oss-20b"
   # 0 makes runs repeatable. If the model rejects this setting,
   # change it to null.
   temperature: 0
@@ -14,15 +12,14 @@ llm:
   # Cap on reply length. Left null until tested: some models count hidden
   # "thinking" tokens towards it, and too low a cap cuts the reply off.
   max_output_tokens: null
-  # USD per 1M tokens for the model above, from OpenAI's pricing page.
-  # Not read from the API -- there's no endpoint for it -- so update this
-  # by hand if the model or its price changes.
+  # Set these to the current Groq model prices per 1M tokens to enable cost estimates.
+  # Zero avoids reporting outdated OpenAI prices as Groq costs.
   pricing:
-    input_per_1m: 2.50
-    output_per_1m: 15.00
+    input_per_1m: 0.0
+    output_per_1m: 0.0
 
 judge:
-  model: gpt-5.4-2026-03-05
+  model: openai/gpt-oss-20b
 
 supervisor:
   # Default decomposition setting for the sequential pipeline and P3 graph.
